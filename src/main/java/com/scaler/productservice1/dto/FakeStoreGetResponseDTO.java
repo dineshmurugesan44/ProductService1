@@ -1,15 +1,15 @@
-package com.scaler.productservice1.model;
+package com.scaler.productservice1.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Product {
+public class FakeStoreGetResponseDTO {
     private Integer id;
     private String title;
+    private Float price;
     private String description;
-    private float price;
+    private String Category;
     private String image;
-    private Category category;
 }
