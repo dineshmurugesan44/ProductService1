@@ -45,15 +45,14 @@ public class ProductController {
 
     @GetMapping("/products")
     public List<Product> getAllProducts() {
-        List<Product> AllProducts = productService.getAllProducts();
 
-        return AllProducts;
-
+        List<Product> products = productService.getAllProducts();
+        return products;
     }
    @PostMapping("/products")
     public Product addProduct(@RequestBody FakeStorePostRequestDTO fakeStorePostRequestDTO) {
 
-        Product added_product = productService.addProduct(fakeStorePostRequestDTO);
-        return added_product;
+        Product product = productService.addProduct(fakeStorePostRequestDTO);
+        return product;
     }
 }
