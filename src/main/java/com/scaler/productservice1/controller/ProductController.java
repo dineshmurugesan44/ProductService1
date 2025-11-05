@@ -31,7 +31,7 @@ public class ProductController {
    @PostMapping("/products")
     public Product addProduct(@RequestBody FakeStorePostRequestDTO fakeStorePostRequestDTO) {
 
-        Product product = productService.addProduct(fakeStorePostRequestDTO);
-        return product;
+        Product added_product = productService.addProduct(fakeStorePostRequestDTO);
+        return added_product;
     }
 }
