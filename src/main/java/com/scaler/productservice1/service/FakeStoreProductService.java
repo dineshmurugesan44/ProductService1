@@ -23,6 +23,38 @@ public class FakeStoreProductService implements ProductService {
         FakeStoreGetResponseDTO fakestoreResponse =  restTemplate.getForObject
                 ("https://fakestoreapi.com/products/" + product_id, FakeStoreGetResponseDTO.class);
 
+        return ConvertFakeStoreResponseToProduct(fakestoreResponse);
+
+
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        FakeStoreGetResponseDTO[] response = restTemplate.getForObject
+                ("https://fakestoreapi.com/products", FakeStoreGetResponseDTO[].class);
+
+        List<Product> products = new ArrayList<>();
+
+        for(FakeStoreGetResponseDTO fakeStoreGetResponseDTO : response){
+            products.add(ConvertFakeStoreResponseToProduct(fakeStoreGetResponseDTO));
+        }
+
+        return products;
+    }
+
+    @Override
+    public Product addProduct(FakeStorePostRequestDTO fakeStorePostRequestDTO) {
+
+        FakeStorePostResponseDTO response =
+                restTemplate.postForObject("https://fakestoreapi.com/products", fakeStorePostRequestDTO, FakeStorePostResponseDTO.class);
+
+
+
+        return CovertPostrequestResponseToProduct(response);
+    }
+
+    //creating common fakestoreresponse to product to follow DRY(DON'T REPEAT YOUR CODE)
+    public Product ConvertFakeStoreResponseToProduct(FakeStoreGetResponseDTO fakestoreResponse){
         Product product = new Product();
         product.setId(fakestoreResponse.getId());
         product.setTitle(fakestoreResponse.getTitle());
@@ -40,37 +72,7 @@ public class FakeStoreProductService implements ProductService {
 
     }
 
-    @Override
-    public List<Product> getAllProducts() {
-        FakeStoreGetResponseDTO[] response = restTemplate.getForObject
-                ("https://fakestoreapi.com/products", FakeStoreGetResponseDTO[].class);
-
-        List<Product> products = new ArrayList<>();
-
-        for(FakeStoreGetResponseDTO fakeStoreGetResponseDTO : response){
-            Product product = new Product();
-            product.setId(fakeStoreGetResponseDTO.getId());
-            product.setTitle(fakeStoreGetResponseDTO.getTitle());
-            product.setDescription(fakeStoreGetResponseDTO.getDescription());
-            product.setPrice(fakeStoreGetResponseDTO.getPrice());
-            product.setImage(fakeStoreGetResponseDTO.getImage());
-            Category category = new Category();
-            category.setName(fakeStoreGetResponseDTO.getCategory());
-            product.setCategory(category);
-
-            products.add(product);
-            
-        }
-
-        return products;
-    }
-
-    @Override
-    public Product addProduct(FakeStorePostRequestDTO fakeStorePostRequestDTO) {
-
-        FakeStorePostResponseDTO response =
-                restTemplate.postForObject("https://fakestoreapi.com/products", fakeStorePostRequestDTO, FakeStorePostResponseDTO.class);
-
+    public Product CovertPostrequestResponseToProduct(FakeStorePostResponseDTO response){
         Product product = new Product();
 
         product.setId(response.getId());
@@ -82,7 +84,11 @@ public class FakeStoreProductService implements ProductService {
         category.setName(response.getCategory());
         product.setCategory(category);
 
-
         return product;
+
+
     }
+
+
+
 }
