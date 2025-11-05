@@ -18,12 +18,15 @@ import java.util.List;
 public class FakeStoreProductService implements ProductService {
     @Autowired
     RestTemplate restTemplate;
+
+
+
     @Override
     public Product getProductById(int product_id) {
         FakeStoreGetResponseDTO fakestoreResponse =  restTemplate.getForObject
                 ("https://fakestoreapi.com/products/" + product_id, FakeStoreGetResponseDTO.class);
 
-        return ConvertFakeStoreResponseToProduct(fakestoreResponse);
+        return fakestoreResponse.toProduct();
 
 
     }
@@ -36,7 +39,7 @@ public class FakeStoreProductService implements ProductService {
         List<Product> products = new ArrayList<>();
 
         for(FakeStoreGetResponseDTO fakeStoreGetResponseDTO : response){
-            products.add(ConvertFakeStoreResponseToProduct(fakeStoreGetResponseDTO));
+            products.add(fakeStoreGetResponseDTO.toProduct());
         }
 
         return products;
@@ -50,11 +53,11 @@ public class FakeStoreProductService implements ProductService {
 
 
 
-        return CovertPostrequestResponseToProduct(response);
+        return response.toProduct();
     }
 
     //creating common fakestoreresponse to product to follow DRY(DON'T REPEAT YOUR CODE)
-    public Product ConvertFakeStoreResponseToProduct(FakeStoreGetResponseDTO fakestoreResponse){
+    /*public Product ConvertFakeStoreResponseToProduct(FakeStoreGetResponseDTO fakestoreResponse){
         Product product = new Product();
         product.setId(fakestoreResponse.getId());
         product.setTitle(fakestoreResponse.getTitle());
@@ -84,11 +87,6 @@ public class FakeStoreProductService implements ProductService {
         category.setName(response.getCategory());
         product.setCategory(category);
 
-        return product;
-
-
-    }
-
-
+        return product; */
 
 }
