@@ -1,8 +1,8 @@
 package com.scaler.productservice1.controller;
 
-import com.scaler.productservice1.dto.ErrorResponseDTO;
+import com.scaler.productservice1.dto.AllProductsResponseDTO;
 import com.scaler.productservice1.dto.FakeStorePostRequestDTO;
-import com.scaler.productservice1.exceptions.DBNotFoundException;
+import com.scaler.productservice1.dto.ProductResponseDTO;
 import com.scaler.productservice1.exceptions.ProductIdCannotBeNegative;
 import com.scaler.productservice1.model.Product;
 import com.scaler.productservice1.service.ProductService;
@@ -22,37 +22,31 @@ public class ProductController {
 
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<ErrorResponseDTO> getProductById(@PathVariable("id") int product_id)  {
-        try {
-            Product product = productService.getProductById(product_id);
-            return new ResponseEntity<>(new ErrorResponseDTO(product, "Success"), HttpStatus.OK);
-        }
-        catch (NullPointerException e) {
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") int product_id) throws ProductIdCannotBeNegative {
 
-            return new ResponseEntity<>(new ErrorResponseDTO(null, "FAILURE " +e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        catch (ProductIdCannotBeNegative e1) {
-            return new ResponseEntity<>(new ErrorResponseDTO(null, "FAILURE " +e1.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Product product = productService.getProductById(product_id);
 
         /*catch(DBNotFoundException e2){
             return new ResponseEntity<>(new ErrorResponseDTO(null, "FAILURE " +e2.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }*/
 
 
+        return new ResponseEntity<>(new ProductResponseDTO(product, "SUCCESS"), HttpStatus.OK);
+
     }
 
     @GetMapping("/products")
-    public List<Product> getAllProducts() {
-
+    public  ResponseEntity<AllProductsResponseDTO> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return products;
+        return new ResponseEntity<>(new AllProductsResponseDTO(products, "SUCCESS"), HttpStatus.OK);
+
     }
+
+
    @PostMapping("/products")
-    public Product addProduct(@RequestBody FakeStorePostRequestDTO fakeStorePostRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> addProduct(@RequestBody FakeStorePostRequestDTO fakeStorePostRequestDTO) {
 
         Product product = productService.addProduct(fakeStorePostRequestDTO);
-        return product;
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ProductResponseDTO(product, "SUCCESS"));
     }
 }

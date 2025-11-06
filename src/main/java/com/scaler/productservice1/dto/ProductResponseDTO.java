@@ -8,10 +8,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+
 @NoArgsConstructor
-public class ErrorResponseDTO {
+@AllArgsConstructor
+public class ProductResponseDTO {
 
     private Product product;
     private String message;
+
+
 }
