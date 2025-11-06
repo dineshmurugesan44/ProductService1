@@ -8,7 +8,7 @@ import lombok.Setter;
 public class FakeStorePostRequestDTO {
 
     private String title;
-    private float price;
+    private Float price;
     private String description;
     private String category;
     private String image;
