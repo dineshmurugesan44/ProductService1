@@ -4,3 +4,11 @@ spring:
 
 server:
   port: 8080
+
+# logging.level.org.springframework.web: trace
+
+#logging:
+  #level:
+    #org:
+      #springframework:
+        #web: trace
