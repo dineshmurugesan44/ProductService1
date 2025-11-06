@@ -3,13 +3,9 @@ package com.scaler.productservice1.service;
 import com.scaler.productservice1.dto.FakeStoreGetResponseDTO;
 import com.scaler.productservice1.dto.FakeStorePostRequestDTO;
 import com.scaler.productservice1.dto.FakeStorePostResponseDTO;
-import com.scaler.productservice1.exceptions.DBNotFoundException;
-import com.scaler.productservice1.exceptions.ProductIdCannotBeNegative;
-import com.scaler.productservice1.exceptions.ProductNotFoundException;
 import com.scaler.productservice1.model.Category;
 import com.scaler.productservice1.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,41 +14,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Qualifier("FakeStoreService")
-public class FakeStoreProductService implements ProductService  {
+@Primary
+public class FakeStoreProductService implements ProductService {
     @Autowired
     RestTemplate restTemplate;
 
+
+
     @Override
-    public Product getProductById(int product_id) throws ProductIdCannotBeNegative {
-
-        if(product_id <= 0){
-            throw new ProductIdCannotBeNegative(product_id +" Product id cannot be negative or zero");
-        }
-
-
-
+    public Product getProductById(int product_id) {
         FakeStoreGetResponseDTO fakestoreResponse =  restTemplate.getForObject
                 ("https://fakestoreapi.com/products/" + product_id, FakeStoreGetResponseDTO.class);
 
-
-        if(fakestoreResponse == null){
-            throw new ProductNotFoundException("Product response is null");
-        }
+        return fakestoreResponse.toProduct();
 
 
-
-
-        //connectToDB();
-
-
-
-        return ConvertFakeStoreResponseToProduct(fakestoreResponse);
     }
-
-    /*private void connectToDB() throws DBNotFoundException {
-        throw new DBNotFoundException("DB not found");
-    }*/
 
     @Override
     public List<Product> getAllProducts() {
@@ -62,7 +39,7 @@ public class FakeStoreProductService implements ProductService  {
         List<Product> products = new ArrayList<>();
 
         for(FakeStoreGetResponseDTO fakeStoreGetResponseDTO : response){
-            products.add(ConvertFakeStoreResponseToProduct(fakeStoreGetResponseDTO));
+            products.add(fakeStoreGetResponseDTO.toProduct());
         }
 
         return products;
@@ -74,17 +51,13 @@ public class FakeStoreProductService implements ProductService  {
         FakeStorePostResponseDTO response =
                 restTemplate.postForObject("https://fakestoreapi.com/products", fakeStorePostRequestDTO, FakeStorePostResponseDTO.class);
 
-        if(response == null){
-            throw new ProductNotFoundException("Product response is null");
-        }
 
 
-
-        return CovertPostrequestResponseToProduct(response);
+        return response.toProduct();
     }
 
     //creating common fakestoreresponse to product to follow DRY(DON'T REPEAT YOUR CODE)
-    public Product ConvertFakeStoreResponseToProduct(FakeStoreGetResponseDTO fakestoreResponse){
+    /*public Product ConvertFakeStoreResponseToProduct(FakeStoreGetResponseDTO fakestoreResponse){
         Product product = new Product();
         product.setId(fakestoreResponse.getId());
         product.setTitle(fakestoreResponse.getTitle());
@@ -114,11 +87,6 @@ public class FakeStoreProductService implements ProductService  {
         category.setName(response.getCategory());
         product.setCategory(category);
 
-        return product;
-
-
-    }
-
-
+        return product; */
 
 }
