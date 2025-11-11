@@ -2,13 +2,23 @@ spring:
   application:
     name: product-service
 
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/product_service
+    username: dinesh
+    password: dinesh123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
 server:
   port: 8080
 
-# logging.level.org.springframework.web: trace
-
-#logging:
-  #level:
-    #org:
-      #springframework:
-        #web: trace
+# Uncomment if you want detailed logging
+# logging:
+#   level:
+#     org:
+#       springframework:
+#         web: trace
