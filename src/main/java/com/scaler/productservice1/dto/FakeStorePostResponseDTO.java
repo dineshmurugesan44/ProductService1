@@ -12,8 +12,8 @@ public class FakeStorePostResponseDTO {
     private String title;
     private Float price;
     private String description;
-    private String Category;
     private String image;
+    private String category;
 
     public Product toProduct() {
         Product product = new Product();
@@ -24,9 +24,9 @@ public class FakeStorePostResponseDTO {
         product.setDescription(this.description);
         product.setImage(this.image);
 
-        com.scaler.productservice1.model.Category category = new Category();
+        Category category = new Category();
 
-        category.setName(this.Category);
+        category.setName(this.category);
 
         product.setCategory(category);
 

@@ -2,10 +2,11 @@ package com.scaler.productservice1.controller;
 
 import com.scaler.productservice1.dto.AllProductsResponseDTO;
 import com.scaler.productservice1.dto.ErrorResponseDTO;
-import com.scaler.productservice1.dto.FakeStorePostRequestDTO;
+import com.scaler.productservice1.dto.ProductRequestDTO;
 import com.scaler.productservice1.dto.ProductResponseDTO;
 import com.scaler.productservice1.exceptions.ProductIdCannotBeNegative;
 import com.scaler.productservice1.exceptions.ProductNotFoundException;
+import com.scaler.productservice1.model.Category;
 import com.scaler.productservice1.model.Product;
 import com.scaler.productservice1.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-        @Qualifier(value = "FakeStoreService")
+        @Qualifier(value = "RealProductService")
     ProductService productService;
 
 
@@ -35,17 +36,14 @@ public class ProductController {
 
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") int product_id) throws ProductIdCannotBeNegative {
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") Long product_id) throws ProductIdCannotBeNegative {
 
         Product product = productService.getProductById(product_id);
 
         /*catch(DBNotFoundException e2){
             return new ResponseEntity<>(new ErrorResponseDTO(null, "FAILURE " +e2.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }*/
-
-
         return new ResponseEntity<>(new ProductResponseDTO(product, "SUCCESS"), HttpStatus.OK);
-
     }
 
     @GetMapping("/products")
@@ -55,14 +53,7 @@ public class ProductController {
 
     }
 
-
-   @PostMapping("/products")
-    public ResponseEntity<ProductResponseDTO> addProduct(@RequestBody FakeStorePostRequestDTO fakeStorePostRequestDTO) {
-
-        Product product = productService.addProduct(fakeStorePostRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ProductResponseDTO(product, "SUCCESS"));
-    }
-
+    //exception handling in controller.
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleProductNotFoundException(ProductNotFoundException e) {
         ErrorResponseDTO error = new ErrorResponseDTO();
@@ -74,7 +65,13 @@ public class ProductController {
         //return response;
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 
+//done for both service
+   @PostMapping("/products")
+    public ResponseEntity<ProductResponseDTO> addProduct(@RequestBody ProductRequestDTO productRequestDTO) {
 
+        Product savedProduct = productService.addProduct(productRequestDTO );
+        return new ResponseEntity<>(new ProductResponseDTO(savedProduct, "SUCCESS"), HttpStatus.CREATED);
     }
 }
