@@ -1,23 +1,20 @@
 package com.scaler.productservice1.service;
 
 import com.scaler.productservice1.dto.FakeStoreGetResponseDTO;
-import com.scaler.productservice1.dto.FakeStorePostRequestDTO;
 import com.scaler.productservice1.dto.FakeStorePostResponseDTO;
+import com.scaler.productservice1.dto.ProductRequestDTO;
 import com.scaler.productservice1.exceptions.ProductIdCannotBeNegative;
 import com.scaler.productservice1.exceptions.ProductNotFoundException;
-import com.scaler.productservice1.model.Category;
 import com.scaler.productservice1.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@Qualifier("FakeStoreService")
+@Service("FakeStoreService")
 public class FakeStoreProductService implements ProductService {
     @Autowired
     RestTemplate restTemplate;
@@ -25,7 +22,7 @@ public class FakeStoreProductService implements ProductService {
 
 
     @Override
-    public Product getProductById(int product_id) throws ProductIdCannotBeNegative {
+    public Product getProductById(Long product_id) throws ProductIdCannotBeNegative {
 
         if(product_id<1){
             throw new ProductIdCannotBeNegative("Product Id cannot be zero or negative");
@@ -38,11 +35,6 @@ public class FakeStoreProductService implements ProductService {
         }
 
         return fakestoreResponse.toProduct();
-
-
-
-
-
 
     }
 
@@ -64,16 +56,14 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public Product addProduct(FakeStorePostRequestDTO fakeStorePostRequestDTO) {
+    public Product addProduct(ProductRequestDTO productRequestDTO) {
 
         FakeStorePostResponseDTO response =
-                restTemplate.postForObject("https://fakestoreapi.com/products", fakeStorePostRequestDTO, FakeStorePostResponseDTO.class);
+                restTemplate.postForObject("https://fakestoreapi.com/products", productRequestDTO, FakeStorePostResponseDTO.class);
 
         if(response == null){
             throw new ProductNotFoundException("Product not found");
         }
-
-
 
         return response.toProduct();
     }
