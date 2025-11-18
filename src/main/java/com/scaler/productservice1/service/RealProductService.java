@@ -7,11 +7,11 @@ import com.scaler.productservice1.model.Category;
 import com.scaler.productservice1.model.Product;
 import com.scaler.productservice1.repository.CategoryRepository;
 import com.scaler.productservice1.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service("RealProductService")
@@ -36,8 +36,9 @@ import java.util.Optional;
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+    public Page<Product> getAllProducts(Integer pageSize, Integer pageNo, String sortDirection, String[] sortBy) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+        Page<Product> products = productRepository.findAll(PageRequest.of(pageNo, pageSize, direction, sortBy));
         return products;
 
     }
@@ -45,16 +46,7 @@ import java.util.Optional;
     @Override
     public Product addProduct(ProductRequestDTO productRequestDTO) {
 
-        Product product = new Product();
-        product.setTitle(productRequestDTO.getTitle());
-        product.setDescription(productRequestDTO.getDescription());
-        product.setPrice(productRequestDTO.getPrice());
-        product.setImage(productRequestDTO.getImage());
-
-        Category category = new Category();
-        category.setName( productRequestDTO.getCategory());
-
-        product.setCategory(category);
+        Product product = productRequestDTO.toProduct();
 
 
         // PRODUCT WILL ALWAYS HAVE NEW ID -> Before creating product we must check wheather category is present or not

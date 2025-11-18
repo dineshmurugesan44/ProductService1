@@ -4,6 +4,9 @@ import com.scaler.productservice1.model.Category;
 import com.scaler.productservice1.model.Product;
 import com.scaler.productservice1.projections.PriceDescriptionProjection;
 import com.scaler.productservice1.projections.ProductProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +22,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product>findById(long id);
 
-    List<Product>findAll();
+    @EntityGraph(attributePaths = {"category"})
+    Page<Product> findAll(Pageable pageable);
 
     List<Product> findAllByCategory_Name(String name);
 

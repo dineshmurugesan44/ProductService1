@@ -2,19 +2,26 @@ spring:
   application:
     name: product-service
 
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/product_service
-    username: dinesh
-    password: dinesh123
-    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
 
 server:
   port: 8080
+
+
 
 # Uncomment if you want detailed logging
 # logging:

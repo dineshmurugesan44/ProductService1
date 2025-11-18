@@ -11,6 +11,7 @@ import com.scaler.productservice1.model.Product;
 import com.scaler.productservice1.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,8 +48,11 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public  ResponseEntity<AllProductsResponseDTO> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
+    public  ResponseEntity<AllProductsResponseDTO> getAllProducts(@RequestParam(defaultValue = "10") Integer pageSize,
+                                                                  @RequestParam(defaultValue = "0") Integer pageNumber,
+                                                                  @RequestParam(defaultValue = "ASC") String sortDirection,
+                                                                  @RequestParam(defaultValue = "id") String[] sortBy)throws ProductIdCannotBeNegative {
+        Page<Product> products = productService.getAllProducts(pageSize, pageNumber, sortDirection, sortBy);
         return new ResponseEntity<>(new AllProductsResponseDTO(products, "SUCCESS"), HttpStatus.OK);
 
     }

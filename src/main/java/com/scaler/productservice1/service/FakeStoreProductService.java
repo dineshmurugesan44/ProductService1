@@ -7,7 +7,9 @@ import com.scaler.productservice1.exceptions.ProductIdCannotBeNegative;
 import com.scaler.productservice1.exceptions.ProductNotFoundException;
 import com.scaler.productservice1.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,7 +41,7 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
+    public Page<Product> getAllProducts(Integer pageSize, Integer pageNo, String sortDirection, String[] sortBy) throws ProductIdCannotBeNegative {
         FakeStoreGetResponseDTO[] response = restTemplate.getForObject
                 ("https://fakestoreapi.com/products", FakeStoreGetResponseDTO[].class);
 
@@ -52,7 +54,18 @@ public class FakeStoreProductService implements ProductService {
             products.add(fakeStoreGetResponseDTO.toProduct());
         }
 
-        return products;
+        // Manual pagination
+        int startIndex = pageNo * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, products.size());
+
+        List<Product> paginatedProducts = products.subList(startIndex, endIndex);
+
+        // Return as a Page
+        return new PageImpl<>(
+                paginatedProducts,
+                PageRequest.of(pageNo, pageSize),
+                products.size()
+        );
     }
 
     @Override
